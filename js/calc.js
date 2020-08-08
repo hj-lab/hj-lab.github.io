@@ -1,3 +1,3 @@
-$(document).on('click', '#btn-cacl', function() {
+$(document).on('click', '#btn-calc', function() {
     alert('Hello!');
 });
