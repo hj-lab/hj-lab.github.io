@@ -1,76 +1,20 @@
-//
-var _submitting = false;
-
-function submitAsync2(param) {
-    var submitTo = (param.submitTo) ? param.submitTo : window.location.pathname;
-    var method = (param.method) ? param.method : 'get';
-    var data = (param.data) ? param.data : {};
-    var callback = (param.callback) ? param.callback : function () { };
-    var useCache = (param.useCache !== undefined) ? param.useCache : true;
-
-    if (method.toLowerCase() !== 'get' && method.toLowerCase() !== 'post' && method.toLowerCase() !== 'put' && method.toLowerCase() !== 'delete') {
-        alert('부적절한 method.');
-        return;
-    }
-    if (_submitting) {
-        alert('처리중입니다.');
-        return;
-    }
-    _submitting = true;
-
-    //
-    console.log(submitTo);
-    console.log(method);
-    console.log(data);
-    console.log(callback);
-    console.log(useCache);
-    //
+$(document).on('click', '#btn', function () {
+    // history.replaceState(null, null, '#https://www.naver.com')
 
     $.ajax({
-        type: method,
-        url: submitTo,
+        url: "https://maplestory.nexon.com/Common/Resource/Item?p=ESiGOaxye8ZazwJEjUhfLFPWF%2fqbF1XfG8ljVaYDLdh5gAOAYkDMNiwntEZOS8u7GrHI0jfzHf1hJpLghIMUqm3v4pXPvJtK4Mh2jBYCDLaeSz5ERvTxeXFrjuzelM9%2bAv8d8XP4RdgnSZYVh7Qik9Vq6%2fmQJeWdWKxugGNz8w0d2E0owxBOW%2bPdgny0ZmsZ32swAR3FWaLgX5%2fjSJSoupr01vXZKABBYVOasgaGIdSvHFbnGJ7mVaz4yeHVCANx%2fwCZCWvXQt4HgTV%2f6HQu1mjH74wmTHChy4JbfocJS1ISSXTHuPD%2bUlHSPcloDcy49PLBxRURP%2bsxDVolL7%2bAjw%3d%3d",
+        type: 'GET',
         async: false,
-        cache: useCache,
-        data: data,
+        cache: false,
         success: function (data) {
-            _submitting = false;
-            callback(data);
+            console.log(data);
         },
-        error: function (a, b) {
-            _submitting = false;
-            alert(b);
+        error: function (data) {
+            console.log('failed');
         }
     });
-}
-//
-
-$(document).on('click', '#btn', function () {
-    // $.ajax({
-    //     url: "https://maplestory.nexon.com/Common/Resource/Item?p=ESiGOaxye8ZazwJEjUhfLFPWF%2fqbF1XfG8ljVaYDLdh5gAOAYkDMNiwntEZOS8u7GrHI0jfzHf1hJpLghIMUqm3v4pXPvJtK4Mh2jBYCDLaeSz5ERvTxeXFrjuzelM9%2bAv8d8XP4RdgnSZYVh7Qik9Vq6%2fmQJeWdWKxugGNz8w0d2E0owxBOW%2bPdgny0ZmsZ32swAR3FWaLgX5%2fjSJSoupr01vXZKABBYVOasgaGIdSvHFbnGJ7mVaz4yeHVCANx%2fwCZCWvXQt4HgTV%2f6HQu1mjH74wmTHChy4JbfocJS1ISSXTHuPD%2bUlHSPcloDcy49PLBxRURP%2bsxDVolL7%2bAjw%3d%3d",
-    //     type: 'GET',
-    //     async: false,
-    //     cache: false,
-    //     success: function (data) {
-    //         console.log(data);
-    //     },
-    //     error: function (data) {
-    //         console.log('failed');
-    //     }
-    // });
-
-    submitAsync2({
-        submitTo: 'https://maplestory.nexon.com/Common/Resource/Item?p=ESiGOaxye8ZazwJEjUhfLFPWF%2fqbF1XfG8ljVaYDLdh5gAOAYkDMNiwntEZOS8u7GrHI0jfzHf1hJpLghIMUqm3v4pXPvJtK4Mh2jBYCDLaeSz5ERvTxeXFrjuzelM9%2bAv8d8XP4RdgnSZYVh7Qik9Vq6%2fmQJeWdWKxugGNz8w0d2E0owxBOW%2bPdgny0ZmsZ32swAR3FWaLgX5%2fjSJSoupr01vXZKABBYVOasgaGIdSvHFbnGJ7mVaz4yeHVCANx%2fwCZCWvXQt4HgTV%2f6HQu1twBvJ0kM9Vy6htgYMfSXA8JNUQJlLYkFZtLttVNbM8dTGCDodOl4cLjsrn3YDHxpw%3d%3d',
-        method: 'get',
-        callback: function (data) {
-            if (data.Code === 0)
-                alert('성공');
-            else
-            console.log(data.Code)
-                alert('데이터가 만료되었습니다. 다시 조회해 주세요!');
-        },
-        useCache: false
-    });
 });
+
 var check_nick = [];
 $(document).on('click', '#btn-add', function() {
     var name = $('#name').val();
@@ -89,13 +33,6 @@ $(document).on('click', '.nick', function() {
     console.log(nick);
     one(nick);
 });
-
-// $('#btn-add').keyup(function(event) {
-//     console.log('a');
-//     if(event.keyCode === 13) {
-//         $('#btn-add').click();
-//     }
-// });
 
 $('#name').keyup(function (key) {
     if (key.keyCode == 13) {
@@ -152,7 +89,8 @@ function two(url) {
         url: url,
         dataType: 'html',
         success: function (data) {
-            // console.log($(data).find('ul.item_pot'));
+            var $op = $(data).find('ul.item_pot > li');
+            console.log($op);
             // console.log($(data).find('div.char_img > div > img'));
             $('#dd').html('<img src="' + $(data).find('div.char_img > div > img')[0].src + '" alt="캐릭터">');
             $test = $(data).find('ul.item_pot > li > img')
@@ -166,11 +104,12 @@ function two(url) {
                         content += '<li></li>';
                         continue;
                     } else if($test[i - m].alt == '') {
-                        content += '<li></li>';
+                        // content += '<li></li>';
                         continue;
                     }
                     // console.log(test[i - m].alt);
-                    content += '<li><img src="' + $test[i - m].src + '" alt="' + $test[i - m].alt + '"></li>';
+                    // content += '<li><img src="' + $test[i - m].src + '" alt="' + $test[i - m].alt + '"></li>';
+                    content += $op[i-m].outerHTML;
                 } catch(e) {
                     console.log(e.name);
                     if(e.name === 'TypeError') {
