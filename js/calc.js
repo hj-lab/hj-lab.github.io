@@ -1,5 +1,9 @@
-var check_name = [],
-    $test;
+var check_name = [];
+
+$(document).ajaxStart(function() {
+    console.log('st');
+    
+});
 
 // 입력박스 클릭시 초기회
 $(document).on('click', '#name', function() {
@@ -27,20 +31,27 @@ $(document).on('click', '#btn-add', function() {
 
 // 이름 삭제
 $(document).on('click', '.del', function(e) {
+    var $element = $(this).parents('button');
+
     e.stopPropagation();
-    $(this).parents('button').remove();
+    if(confirm($element.attr('data-name') + '를 삭제하시겠습니까?')) {
+        const idx = check_name.indexOf($element.attr('data-name'));
+        check_name.splice(idx, 1);
+        $element.remove();
+    }
 });
 
 // 이름 선택
 $(document).on('click', '.name', function(e) {
     var name = $(this).attr('data-name');
-    search_char(name);
+
+    searchChar(name);
 });
 
 // 캐릭터 찾기
-function search_char(name) {
+function searchChar(name) {
     var base = 'https://maplestory.nexon.com',
-        flag = true;
+        noSearch = true;
 
     $.ajax({
         url: "https://maplestory.nexon.com/Ranking/World/Total?c=" + name,
@@ -51,17 +62,17 @@ function search_char(name) {
 
                 // console.log($tmp.innerText);
                 if ($tmp.innerText == name) {
-                    flag = false;
+                    noSearch = false;
                     address = $(this).find('a')[0].attributes[0].value;
                     // console.log(address);
                     var str1 = address.substring(0, address.indexOf('?')),
                         str2 = address.substr(address.indexOf('?'), address.length),
                         marge = str1 + '/Equipment' + str2;
                     // console.log(marge);
-                    load_item(base + marge);
+                    loadItem(base + marge);
                 }
             });
-            if(flag) {
+            if(noSearch) {
                 alert('검색결과가 없습니다.');
             }
         }, error: function (data) {
@@ -72,33 +83,29 @@ function search_char(name) {
 }
 
 // 아이템 불러오기
-function load_item(url) {
+function loadItem(url) {
     $.ajax({
         url: url,
         dataType: 'html',
         success: function (data) {
-            // var $op = $(data).find('ul.item_pot > li'); // 아이템 옵션
-            // console.log($op);
-            // console.log($(data).find('div.char_img > div > img'));
-            $('#dd').html('<img src="' + $(data).find('div.char_img > div > img')[0].src + '" alt="캐릭터">');
-            $test = $(data).find('ul.item_pot > li > img')
-            var content = '',
-                m = 0;
-            // console.log(test);
+            var $element = $(data).find('ul.item_pot > li > img'), //$(data).find('ul.item_pot > li'); // 아이템 옵션
+                content = '',
+                syncCnt = 0;
+
+            $('#avatar').html('<img src="' + $(data).find('div.char_img > div > img')[0].src + '" alt="캐릭터">'); // 캐릭터 이미지
             for (var i = 0; i < 30; i++) {
                 try {
                     if (i == 1 || i == 3 || i == 8 || i == 25 || i == 26) {
-                        m++;
+                        syncCnt++;
                         content += '<li></li>';
                         continue;
-                    } else if($test[i - m].alt == '') {
+                    } else if($element[i - syncCnt].alt == '') {
                         content += '<li></li>';
                         continue;
                     }
-                    // console.log($test[i - m].alt);
-                    content += '<li><img src="' + $test[i - m].src + '" alt="' + $test[i - m].alt + '"></li>';
+                    // console.log($element[i - syncCnt].alt); //아이템 명
+                    content += '<li><img src="' + $element[i - syncCnt].src + '" alt="' + $element[i - syncCnt].alt + '"></li>';
                 } catch(e) {
-                    console.log(e.name);
                     if(e.name === 'TypeError') {
                         console.log('권한이 없습니다.');
                     }

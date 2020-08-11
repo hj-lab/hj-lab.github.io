@@ -27,9 +27,13 @@ ul {
 #content {
     width: 420px;
     height: 504px;
+    margin-top: 40px;
+}
+
+#content::after {
     float: left;
     background: url(https://ssl.nx.com/s2/game/maplestory/renewal/common/char_info/weapon_bg.png) left top no-repeat;
-    margin-top: 40px;
+    opacity: 0.5;
 }
 
 .item_pot li {
